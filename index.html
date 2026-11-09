@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ShuruKar Bihar | Real Street & Route Network Guide</title>
+  <link rel="stylesheet" href="./vendor/leaflet.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'">
+  <script src="./vendor/leaflet.js"></script>
+  <script>if(typeof L==='undefined'){document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');}</script>
+  <style>
+:root {
+  --primary: #0f766e;
+  --primary-dark: #134e4a;
+  --primary-hover: #115e59;
+  --primary-soft: #e6f4f1;
+  --primary-surface: #f0fdfa;
+  --accent: #d97706;
+  --accent-soft: #fef3c7;
+  --gold: #f59e0b;
+  --ink: #132e2b;
+  --ink-muted: #536b66;
+  --paper: #f4f7f4;
+  --card: #ffffff;
+  --line: #dbe5de;
+  --line-subtle: #edf2ee;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-sm: 0 2px 6px rgba(15, 118, 110, 0.05);
+  --shadow-md: 0 10px 25px -4px rgba(19, 46, 43, 0.08);
+  --shadow-lg: 0 20px 35px -8px rgba(19, 46, 43, 0.14);
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 14px/1.5 var(--font);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: linear-gradient(135deg, #134e4a 0%, #0f766e 70%, #115e59 100%);
+  color: white;
+  padding: 16px clamp(16px, 3.5vw, 44px);
+  box-shadow: 0 4px 18px rgba(15, 118, 110, 0.25);
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.brand-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+  font-weight: 800;
+  color: #99f6e4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.brand-badge {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 10px;
+  color: #f0fdfa;
+}
+h1 {
+  font-size: clamp(20px, 2.8vw, 32px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 6px 0 4px;
+  letter-spacing: -0.03em;
+}
+header p {
+  margin: 0;
+  color: #ccfbf1;
+  font-size: 13px;
+  max-width: 820px;
+}
+.shell {
+  max-width: 1560px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px clamp(12px, 2.5vw, 32px) 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.controls {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: minmax(170px, 0.8fr) minmax(260px, 1.8fr) minmax(130px, 0.6fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.field label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.field select, .field input {
+  width: 100%;
+  height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+.field select:focus, .field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+.btn {
+  height: 42px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 0 18px;
+  background: var(--primary);
+  color: white;
+  font: 700 13px/42px var(--font);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+}
+.btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.35);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.view-toggle-bar {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+}
+.tab-btn {
+  flex: 1;
+  height: 38px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-muted);
+  font: 700 12px var(--font);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.tab-btn.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(350px, 0.95fr);
+  gap: 14px;
+  align-items: stretch;
+  flex: 1;
+}
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panelhead {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  background: #fafcfa;
+}
+.panelhead h2 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--ink);
+}
+.panelhead p {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  margin: 1px 0 0;
+}
+.badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  border-radius: 99px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.geo-map-wrap {
+  position: relative;
+  height: min(72vh, 720px);
+  min-height: 480px;
+  width: 100%;
+  background: #e2ece6;
+  flex: 1;
+}
+#map {
+  width: 100%;
+  height: 100%;
+  background: #e9f0eb;
+}
+.map-tools {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.map-tool-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #cad9cf;
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.map-tool-btn:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.map-basemap-control {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  padding: 3px;
+  display: flex;
+  gap: 3px;
+  max-width: calc(100% - 70px);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.layer-chip {
+  border: 0;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.layer-chip.active {
+  background: var(--primary);
+  color: white;
+}
+.map-foot {
+  padding: 8px 14px;
+  color: var(--ink-muted);
+  font-size: 11px;
+  border-top: 1px solid var(--line);
+  background: #fdfefd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-hub { background: var(--gold); border: 1px solid #b45309; }
+.dot-spoke { background: var(--primary); }
+.dot-amber { background: var(--accent); }
+.unlocated {
+  padding: 8px 14px;
+  color: #92400e;
+  background: #fffbeb;
+  font-size: 11.5px;
+  border-top: 1px solid #fef3c7;
+}
+.trip-summary-box {
+  background: linear-gradient(135deg, #f0fdfa, #f7fee7);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.trip-stat {
+  display: inline-flex;
+  flex-direction: column;
+}
+.trip-stat-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+.trip-stat-lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  font-weight: 700;
+}
+.trip-itinerary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0;
+  max-width: 100%;
+}
+.stop-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: white;
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.stop-pill-remove {
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 0 2px;
+}
+.stop-pill-remove:hover { color: #ef4444; }
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.filter-bar {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fafbfa;
+}
+.filter-chips-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  border: 1px solid var(--line);
+  background: white;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.spoke-search-input {
+  width: 100%;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0 10px;
+  font-size: 12px;
+  background: white;
+}
+.spoke-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.spoke-list {
+  max-height: 520px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.spoke {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line-subtle);
+  padding: 9px 14px;
+  transition: background 0.12s;
+  cursor: pointer;
+}
+.spoke:hover {
+  background: var(--primary-surface);
+}
+.spoke.selected {
+  background: #f0fdf4;
+  border-left: 3px solid var(--primary);
+}
+.spoke input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.spoke-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.spoke-meta {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.meta-tag {
+  background: #f1f5f3;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.meta-tag.review {
+  background: var(--accent-soft);
+  color: #b45309;
+}
+.meta-tag.rating {
+  background: #ecfdf5;
+  color: #047857;
+  font-weight: 800;
+}
+.map-link {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #f2f7f4;
+  transition: all 0.12s;
+}
+.map-link:hover {
+  background: var(--primary-soft);
+  text-decoration: underline;
+}
+.details {
+  padding: 12px 14px;
+  background: #f9fbf9;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.details strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+.details a {
+  color: var(--primary);
+  font-weight: 800;
+}
+.notice {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #78350f;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 11.5px;
+}
+.custom-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+.custom-pin:hover {
+  transform: scale(1.15);
+  z-index: 1000 !important;
+}
+.hub-pin-inner {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  position: relative;
+}
+.hub-pin-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #f59e0b;
+  animation: pin-pulse 2s infinite ease-out;
+  pointer-events: none;
+}
+@keyframes pin-pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.spoke-pin-inner {
+  background: #0f766e;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+.spoke-pin-inner.amber {
+  background: #d97706;
+}
+.stop-pin-inner {
+  background: #047857;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid #fef08a;
+  box-shadow: 0 3px 8px rgba(4, 120, 87, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  font: 12.5px/1.45 var(--font);
+  padding: 2px;
+}
+.popup-card {
+  max-width: 280px;
+  padding: 6px;
+}
+.popup-title {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.popup-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.popup-address {
+  color: var(--ink-muted);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+.popup-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.popup-btn {
+  border: 0;
+  border-radius: 4px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.popup-btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.popup-btn-outline {
+  background: #f1f5f3;
+  color: var(--ink);
+  text-decoration: none;
+}
+@media (max-width: 960px) {
+  .workspace { grid-template-columns: 1fr; }
+  .controls { grid-template-columns: 1fr 1fr; }
+  .controls > .btn { grid-column: 1 / -1; }
+  .geo-map-wrap { height: 55vh; min-height: 420px; }
+  .spoke-list { max-height: 380px; }
+}
+@media (max-width: 640px) {
+  .view-toggle-bar { display: flex; }
+  .controls { grid-template-columns: 1fr; padding: 10px; }
+  .controls > .btn { grid-column: auto; }
+  .workspace.tab-map .panel:nth-child(2) { display: none; }
+  .workspace.tab-spokes .panel:nth-child(1) { display: none; }
+  .geo-map-wrap { height: calc(100vh - 340px); min-height: 380px; }
+}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <div class="brand-eyebrow">
+        <span>●</span> SHURUKAR BIHAR FIELD GUIDE
+        <span class="brand-badge">Real Street &amp; Network Map</span>
+      </div>
+      <span class="brand-badge" id="totalCount">107 institutions · 6 districts</span>
+    </div>
+    <h1>Choose a hub. See the real street network.</h1>
+    <p>Official district borders, full street cartography, live road routing, and stop-by-stop directions to Google Maps.</p>
+  </header>
+
+  <main class="shell">
+    <section class="controls" aria-label="District and Hub Selectors">
+      <div class="field">
+        <label for="district">1 · District</label>
+        <select id="district" aria-label="Choose a district"></select>
+      </div>
+
+      <div class="field">
+        <label for="hub">2 · High-rated hub</label>
+        <select id="hub" aria-label="Choose a potential hub"></select>
+      </div>
+
+      <div class="field">
+        <label for="mode">3 · Mode</label>
+        <select id="mode" aria-label="Travel mode">
+          <option value="driving">🚗 Car</option>
+          <option value="transit">🚆 Transit</option>
+        </select>
+      </div>
+
+      <button class="btn" id="routeButton" disabled>
+        <span>Open in Google Maps</span> ↗
+      </button>
+    </section>
+
+    <div class="view-toggle-bar" id="mobileTabs">
+      <button class="tab-btn active" id="tabMapBtn" type="button">🗺️ Map View</button>
+      <button class="tab-btn" id="tabSpokesBtn" type="button">📋 Institutions &amp; Stops</button>
+    </div>
+
+    <div class="workspace tab-map" id="workspace">
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <h2 id="mapTitle">Institution map</h2>
+            <p id="mapSubtitle">Choose a district and hub to see its network.</p>
+          </div>
+          <span class="badge" id="pinBadge">0 mapped</span>
+        </div>
+
+        <div class="geo-map-wrap">
+          <div class="map-basemap-control" aria-label="Basemap Style">
+            <button class="layer-chip active" id="btnLayerVoyager" type="button" title="Streets & Towns (CARTO)">Streets</button>
+            <button class="layer-chip" id="btnLayerEsri" type="button" title="Detailed GIS Streets (Esri)">GIS Streets</button>
+            <button class="layer-chip" id="btnLayerOsm" type="button" title="OpenStreetMap (OSM)">OSM</button>
+            <button class="layer-chip" id="btnLayerSatellite" type="button" title="Satellite with Street Labels">Satellite</button>
+          </div>
+
+          <div class="map-tools" aria-label="Map Tools">
+            <button class="map-tool-btn" id="zoomIn" type="button" aria-label="Zoom in" title="Zoom in">+</button>
+            <button class="map-tool-btn" id="zoomOut" type="button" aria-label="Zoom out" title="Zoom out">−</button>
+            <button class="map-tool-btn" id="mapReset" type="button" aria-label="Fit to District" title="Fit to District">⛶</button>
+          </div>
+
+          <div id="map" aria-label="Interactive street map of Bihar institutions"></div>
+        </div>
+
+        <div class="map-foot">
+          <div>
+            <span class="legend-item"><span class="dot dot-hub"></span> Gold = Hub</span>
+            <span class="legend-item"><span class="dot dot-spoke"></span> Teal = Matched Pin</span>
+            <span class="legend-item"><span class="dot dot-amber"></span> Amber = Review</span>
+          </div>
+          <span id="routeStatusText">Select up to 8 spokes to calculate road route.</span>
+        </div>
+
+        <div id="unlocated" class="unlocated"></div>
+      </section>
+
+      <section class="panel sidebar">
+        <div class="trip-summary-box" id="tripSummaryBox" style="display:none;">
+          <div class="trip-stat">
+            <span class="trip-stat-val" id="tripDistance">—</span>
+            <span class="trip-stat-lbl">Road Distance</span>
+          </div>
+          <div class="trip-stat">
+            <span class="trip-stat-val" id="tripDuration">—</span>
+            <span class="trip-stat-lbl">Drive Time</span>
+          </div>
+          <button class="layer-chip" id="clearRouteBtn" type="button" style="color:#ef4444;border:1px solid #fca5a5;">Clear Stops</button>
+          <div class="trip-itinerary" id="tripItineraryPills"></div>
+        </div>
+
+        <div class="panelhead">
+          <div>
+            <h2 id="spokeTitle">Spoke institutions</h2>
+            <p>Select stops to route from the hub.</p>
+          </div>
+          <span class="badge" id="selectedBadge">0 selected</span>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="spokeSearch" class="spoke-search-input" placeholder="Search institutions, places..." aria-label="Filter spokes">
+          <div class="filter-chips-row">
+            <button class="filter-chip active" data-filter="all" type="button">All</button>
+            <button class="filter-chip" data-filter="high" type="button">High Rated (4★+)</button>
+            <button class="filter-chip" data-filter="incubation" type="button">Incubators/Cells</button>
+            <button class="filter-chip" data-filter="review" type="button">Needs Review</button>
+          </div>
+        </div>
+
+        <div id="spokeList" class="spoke-list"></div>
+
+        <div id="details" class="details">
+          Select a spoke or map pin to review its match, coordinates, and open its Google Maps location.
+        </div>
+      </section>
+    </div>
+
+    <div class="notice">
+      <strong>Road Routing Guidance:</strong> The map plots verified Google Maps place coordinates and computes actual road routes via the street network. Select up to 8 spokes from the district hub and click <em>Open in Google Maps</em> for turn-by-turn navigation with real-time traffic.
+    </div>
+  </main>
+
+  <script>const DATA=[{"id":"BR-001","district":"Bhagalpur","original_name":"Bihar Agricultural University (BAU) Sabour + SABAGRIs + CABM","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"5.0","facilities_score":"4.0","innovation_score":"5.0","institution_type":"State agricultural university / incubation","display_type":"Institution + incubator/cell","tier":"Tier 1 \u2014 nationally ranked / leading institute","incubator_or_cell_evidence":"SABAGRIs/BAU startup support includes agripreneurship prototyping, mentoring, training, and startup-network access.","facilities_evidence":"Official Bihar incubation listing documents agri-startup prototyping, domain mentoring, training, and network access.","rating_sources":"https://www.nirfindia.org/Rankings/2025/AgricultureRanking.html | https://startup.bihar.gov.in/IncubationCell","address":"63Q2+27X, Bhagalpur Rd, Agriculture University, Bhagalpur, Bihar 813210","latitude":"25.2376196","longitude":"87.0507325","matched_place_name":"Bihar Agricultural University (BAU)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2376196%2C87.0507325","hub_heuristic_score":"4.4","data_quality_note":"Google Maps result matched the BAU Sabour campus."},{"id":"BR-002","district":"Bhagalpur","original_name":"IIIT Bhagalpur + Start-up Cell","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"1.0","reputation_score":"5.0","facilities_score":"5.0","innovation_score":"4.0","institution_type":"Institute of National Importance / technical university","display_type":"University/college","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"Institute Start-up Cell is documented; Bihar\u2019s official incubation directory lists mentoring and training support.","facilities_evidence":"Permanent 50-acre residential campus; official pages list laboratories, computer centre, library, hostels, canteen, and indoor/outdoor sports facilities.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://iiitbh.ac.in/about-iiitbh | https://iiitbh.ac.in/index.php/directors-message | https://www.iiitbh.ac.in/sites/default/files/Document/Adevertisment_Startup_Cell.PDF | https://startup.bihar.gov.in/IncubationCell","address":"Sabour, Bhagalpur, Bihar 813210","latitude":"25.2597689","longitude":"87.0403587","matched_place_name":"Indian Institute of Information Technology Bhagalpur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2597689%2C87.0403587","hub_heuristic_score":"4.35","data_quality_note":"Startup cell is associated with the IIIT campus."},{"id":"BR-003","district":"Bhagalpur","original_name":"Marwari College, Bhagalpur (BBA/BCA/B.Com vocational wing)","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government constituent college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.marwaricollegebhagalpur.ac.in/Admission-Selection-List-2026-%282026-29%29.pdf","address":"Marwari College, Bhagalpur","latitude":"25.2458623","longitude":"86.9570412","matched_place_name":"Marwari College, Bhagalpur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2458623%2C86.9570412","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched the Bhagalpur campus."},{"id":"BR-004","district":"Bhagalpur","original_name":"T.N.B. College, Bhagalpur","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government constituent college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/CollegeRanking.html | https://tnbcollege.org/album/Official/21_05_202505_25_13%20News%20.pdf","address":"TNB College Rd, Lower Nathnagar, Bhagalpur, Bihar 812007","latitude":"25.2406125","longitude":"86.9525469","matched_place_name":"T.N.B. College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2406125%2C86.9525469","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched the college."},{"id":"BR-005","district":"Bhagalpur","original_name":"Bhagalpur College of Engineering (BCE) + Startup Cell","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"4.0","institution_type":"Government engineering college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"Official Start-up Cell and Institute Innovation Council document infrastructure support, mentoring, and student startup activity.","facilities_evidence":"Official college pages document startup support and access to college resources; a comprehensive facilities inventory was not located.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.bcebhagalpur.ac.in/academics/start-up-cell/","address":"National Highway 80, Sabour, Bhagalpur","latitude":"25.2525259","longitude":"87.0423794","matched_place_name":"Bhagalpur College of Engineering","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2525259%2C87.0423794","hub_heuristic_score":"3.4","data_quality_note":"Startup cell is associated with the college campus."},{"id":"BR-006","district":"Bhagalpur","original_name":"College of Agri Business Management (CABM), BAU Sabour","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"4.0","institution_type":"Management college","display_type":"Management institute","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"Associated with BAU Sabour\u2019s agri-startup and innovation ecosystem; evidence is at the parent-campus level.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://startup.bihar.gov.in/IncubationCell","address":"63Q2+27X, Bhagalpur Rd, Agriculture University, Bhagalpur, Bihar 813210","latitude":"25.2376196","longitude":"87.0507325","matched_place_name":"Bihar Agricultural University (BAU) - CABM","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2376196%2C87.0507325","hub_heuristic_score":"3.4","data_quality_note":"Verified constituent agribusiness management college operating directly within the BAU Sabour main campus complex."},{"id":"BR-007","district":"Bhagalpur","original_name":"Government Polytechnic, Bhagalpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Housing Board Colony, Barari, Bhagalpur, Bihar 812003","latitude":"25.2630378","longitude":"87.0202247","matched_place_name":"Government Polytechnic Bhagalpur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2630378%2C87.0202247","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Government Polytechnic Bhagalpur."},{"id":"BR-008","district":"Bhagalpur","original_name":"Tilka Manjhi Bhagalpur University (TMBU)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.tmbuniv.ac.in/public/uploads/1751369920_4a755d76193c1a8562a3.pdf","address":"Ravindra Bhavan Rd, Tatarpur, Bhagalpur, Bihar 812002","latitude":"25.2488723","longitude":"86.9595622","matched_place_name":"Tilka Manjhi Bhagalpur University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.2488723%2C86.9595622","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the university."},{"id":"BR-009","district":"Bhagalpur","original_name":"Arjun College of Technical Education, Naugachia","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Barauni\u2013Purnea Hwy, Naugachhia, Bihar 853204","latitude":"25.3963586","longitude":"87.1637044","matched_place_name":"Arjun College of Technical Education","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.3963586%2C87.1637044","hub_heuristic_score":"2.55","data_quality_note":"Verified SBTE-affiliated technical education campus located on NH-31, Naugachia."},{"id":"BR-010","district":"Bhagalpur","original_name":"Nilimarjun College of Polytechnic, Naugachia","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Zero Mile, Naugachhia, Bihar 853202","latitude":"25.3795652","longitude":"87.0629724","matched_place_name":"Nilimarjun College of Polytechnic","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.3795652%2C87.0629724","hub_heuristic_score":"2.55","data_quality_note":"Verified AICTE-approved engineering diploma polytechnic campus at Zero Mile, Naugachia."},{"id":"BR-011","district":"Darbhanga","original_name":"LNMU constituent: C.M. Science College, Darbhanga","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.cmscdarbhanga.in/","address":"Darbhanga Tower, Mirzapur, Lal Bagh, Darbhanga, Bihar 846004","latitude":"26.1530918","longitude":"85.8924993","matched_place_name":"C. M. Science College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1530918%2C85.8924993","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched C.M. Science College."},{"id":"BR-012","district":"Darbhanga","original_name":"Darbhanga College of Engineering (DCE) + MIITIE incubator","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"4.0","institution_type":"Government engineering college / incubator","display_type":"Institution + incubator/cell","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"MIITIE/startup support is listed with co-working space, internet, training, and mentorship.","facilities_evidence":"Official Bihar incubation listing reports co-working space, internet access, training, and mentorship; broader campus facilities not assessed.","rating_sources":"https://www.nirfindia.org/Rankings/2025/EngineeringRanking.html | https://startup.bihar.gov.in/IncubationCell","address":"Lal Sahpur, Mabbi Belauna, Darbhanga, Bihar 846005","latitude":"26.1794671","longitude":"85.8649296","matched_place_name":"Darbhanga College of Engineering","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1794671%2C85.8649296","hub_heuristic_score":"3.4","data_quality_note":"MIITIE incubator is associated with the college."},{"id":"BR-013","district":"Darbhanga","original_name":"Dr. A.P.J. Abdul Kalam Women\u2019s Institute of Technology (WIT), LNMU","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University institute / women\u2019s technology institute","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Raj Kila area, Darbhanga","latitude":"26.1646875","longitude":"85.8944375","matched_place_name":"Dr. A.P.J. Abdul Kalam Women\u2019s Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1646875%2C85.8944375","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the Women\u2019s Institute of Technology."},{"id":"BR-014","district":"Darbhanga","original_name":"Government Polytechnic, Darbhanga","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sundarpur, Darbhanga, Bihar 846004","latitude":"26.1691506","longitude":"85.8939269","matched_place_name":"Government Polytechnic Darbhanga","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1691506%2C85.8939269","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Government Polytechnic Darbhanga."},{"id":"BR-015","district":"Darbhanga","original_name":"Kameshwar Singh Darbhanga Sanskrit University","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Darbhanga, Bihar 846008","latitude":"26.1647175","longitude":"85.8971432","matched_place_name":"Kameshwar Singh Darbhanga Sanskrit University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1647175%2C85.8971432","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the university."},{"id":"BR-016","district":"Darbhanga","original_name":"Lalit Narayan Mithila University (LNMU)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf | https://lnmu.ac.in/constituent-colleges","address":"Kameshwaranagar, Darbhanga, Bihar 846008","latitude":"26.1609905","longitude":"85.8958245","matched_place_name":"Lalit Narayan Mithila University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1609905%2C85.8958245","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched LNMU."},{"id":"BR-017","district":"Darbhanga","original_name":"LNMU constituent: C.M. College, Darbhanga","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Constituent multidisciplinary college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/CollegeRanking.html | https://www.cmclnmu.ac.in/accredition","address":"Darbhanga","latitude":"26.1453637","longitude":"85.8910375","matched_place_name":"C. M. College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1453637%2C85.8910375","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched C.M. College."},{"id":"BR-018","district":"Darbhanga","original_name":"LNMU constituent: K.S. College, Laheriasarai","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"PWD Colony, Laheriasarai, Darbhanga, Bihar 846004","latitude":"26.1376652","longitude":"85.9023065","matched_place_name":"Kunwar Singh College (K.S. College)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1376652%2C85.9023065","hub_heuristic_score":"3.1","data_quality_note":"Verified constituent college of Lalit Narayan Mithila University (LNMU) in Laheriasarai."},{"id":"BR-019","district":"Darbhanga","original_name":"LNMU constituent: M.K. College, Laheriasarai","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Mogalpura, Laheriasarai, Darbhanga, Bihar 846001","latitude":"26.1275345","longitude":"85.9013249","matched_place_name":"Maharani Kalyani College (M.K. College)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1275345%2C85.9013249","hub_heuristic_score":"3.1","data_quality_note":"Verified NAAC-accredited constituent unit of LNMU in Laheriasarai."},{"id":"BR-020","district":"Darbhanga","original_name":"LNMU constituent: M.L.S.M. College, Darbhanga","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://mlsmcollege.ac.in/wp-content/uploads/2023/01/AQAR-2019-20.pdf","address":"Kathalbari, Darbhanga, Bihar 846004","latitude":"26.1586101","longitude":"85.9047364","matched_place_name":"M.L.S.M. College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1586101%2C85.9047364","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched M.L.S.M. College."},{"id":"BR-021","district":"Darbhanga","original_name":"LNMU constituent: M.R.M. College, Darbhanga","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=LNMU%20constituent%3A%20M.R.M.%20College%2C%20Darbhanga%2C%20Darbhanga%2C%20Bihar%2C%20India","hub_heuristic_score":"3.1","data_quality_note":"Google Maps returned an M.R.M. College Road listing, not a verified college place. Exact campus match pending."},{"id":"BR-022","district":"Darbhanga","original_name":"LNMU constituent: Marwari College, Darbhanga","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.collegeadmission.in/college/marwari-college-darbhanga-1793","address":"Donar, Darbhanga, Bihar 846004","latitude":"26.1434911","longitude":"85.9036052","matched_place_name":"Marwari College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1434911%2C85.9036052","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Marwari College, Darbhanga."},{"id":"BR-023","district":"Darbhanga","original_name":"LNMU constituent: Millat College, Laheriasarai","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://millatcollegedarbhanga.in/","address":"Lalbagh, Karamganj, Darbhanga, Bihar 846004","latitude":"26.1374146","longitude":"85.892318","matched_place_name":"Millat College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1374146%2C85.892318","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Millat College."},{"id":"BR-024","district":"Darbhanga","original_name":"LNMU Department of Commerce & Business Administration","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Management college","display_type":"Management institute","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://lnmu.ac.in/constituent-colleges","address":"Darbhanga","latitude":"26.1674237","longitude":"85.9018186","matched_place_name":"University Department of Commerce and Business Administration","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1674237%2C85.9018186","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the university department."},{"id":"BR-025","district":"Darbhanga","original_name":"Captain Institute of Management, Rasoolpur Bahadurpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private professional college","display_type":"University/college","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Rasoolpur PO, Bahadurpur, Darbhanga, Bihar 846003","latitude":"26.1374039","longitude":"85.9128562","matched_place_name":"Captain Institute of Management","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1374039%2C85.9128562","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-026","district":"Darbhanga","original_name":"Institute of Business Management (IBM), Bela / Dilli More","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private management / professional college","display_type":"Management institute","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"NH-57, Dilli More, Bela, Darbhanga, Bihar 846004","latitude":"26.1515766","longitude":"85.8972336","matched_place_name":"I.B.M. Bela","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1515766%2C85.8972336","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched I.B.M. Bela."},{"id":"BR-027","district":"Gaya","original_name":"IIM Bodh Gaya (IIMBG INSPIRE incubator and Envision Cell)","rating_cluster":"Highest rated (district maximum)","revised_rating":"5.0","academic_score":"4.0","reputation_score":"5.0","facilities_score":"5.0","innovation_score":"5.0","institution_type":"Institute of National Importance / management institute","display_type":"Management institute","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"INSPIRE is an active incubation and startup hub; support includes workspace, mentoring, training, and access to funding/markets.","facilities_evidence":"119-acre permanent campus with documented built space, green infrastructure, and on-campus learning/living facilities.","rating_sources":"https://www.nirfindia.org/Rankings/2025/ManagementRanking.html | https://www.education.gov.in/sites/upload_files/mhrd/files/annual_report_he/AR_Bodhgaya_2023_24.pdf | https://iimbg.ac.in/campus-sustainability/ | https://iimbg.ac.in/center-detail/?center_id=c17804845287375","address":"Prabandh Vihar, Bodh Gaya, Bihar 824234","latitude":"24.6794811","longitude":"84.9646481","matched_place_name":"Indian Institute of Management Bodh Gaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.6794811%2C84.9646481","hub_heuristic_score":"5.0","data_quality_note":"Google Maps result matched IIM Bodh Gaya; incubator/cell is associated with the campus."},{"id":"BR-028","district":"Gaya","original_name":"Central University of South Bihar (CUSB)","rating_cluster":"Highest rated (district maximum)(M)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"5.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Central university","display_type":"University/college","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/UniversityRanking.html | https://www.nirfindia.org/Rankings/2025/LawRanking.html | https://www.cusb.ac.in/images/2024/annual_report/ar_eng_24_25.pdf","address":"NH-120, Panchanpur, Fatehpur, Bihar 824236","latitude":"24.872127","longitude":"84.8894366","matched_place_name":"Central University of South Bihar (Gaya)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.872127%2C84.8894366","hub_heuristic_score":"3.55","data_quality_note":"Google Maps result matched CUSB."},{"id":"BR-029","district":"Gaya","original_name":"Gaya College of Engineering (GCE) + Startup Cell","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government engineering college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"Startup/innovation support is named in the institute listing; operating scope and facility depth were not independently verified.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sri Krishna Nagar, Gaya","latitude":"24.9006358","longitude":"85.0481238","matched_place_name":"Gaya College of Engineering","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.9006358%2C85.0481238","hub_heuristic_score":"3.1","data_quality_note":"Startup cell is associated with the college."},{"id":"BR-030","district":"Gaya","original_name":"Gaya College, Gaya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government multidisciplinary college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gewalbigha, Gaya, Bihar 823001","latitude":"24.7832764","longitude":"84.9885624","matched_place_name":"Gaya College, Gaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7832764%2C84.9885624","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Gaya College."},{"id":"BR-031","district":"Gaya","original_name":"Government Polytechnic, Gaya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Ghughari Tand, Gaya, Bihar 823001","latitude":"24.7639499","longitude":"85.0077241","matched_place_name":"Government Polytechnic, Gaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7639499%2C85.0077241","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Government Polytechnic."},{"id":"BR-032","district":"Gaya","original_name":"Magadh University, Bodh Gaya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Bodh Gaya, Bihar 824234","latitude":"24.6867467","longitude":"84.9651339","matched_place_name":"Magadh University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.6867467%2C84.9651339","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Magadh University."},{"id":"BR-033","district":"Gaya","original_name":"Akash Polytechnic College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gaya\u2013Bodhgaya Rd, Maranpur, Gaya, Bihar 823001","latitude":"24.7726768","longitude":"85.003632","matched_place_name":"Akash Polytechnic College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7726768%2C85.003632","hub_heuristic_score":"2.55","data_quality_note":"Verified AICTE-approved and SBTE-affiliated diploma engineering institute in Gaya."},{"id":"BR-034","district":"Gaya","original_name":"Amrath Technical College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=Amrath%20Technical%20College%2C%20Gaya%2C%20Bihar%2C%20India","hub_heuristic_score":"2.55","data_quality_note":"No reliable Google Maps match confirmed for Amrath Technical College. Exact location pending."},{"id":"BR-035","district":"Gaya","original_name":"Aryabhatt Polytechnic","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Hariharpur, Bodh Gaya, Bihar 823004","latitude":"24.7184621","longitude":"84.9727477","matched_place_name":"Aryabhatt Polytechnic","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7184621%2C84.9727477","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched Aryabhatt Polytechnic."},{"id":"BR-036","district":"Gaya","original_name":"Buddha Institute of Technology (BIT), Gaya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private technical/polytechnic institute","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gaya Industrial Area, Bihar 823004","latitude":"24.7296132","longitude":"84.9656367","matched_place_name":"Buddha Institute of Technology, Gaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7296132%2C84.9656367","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-037","district":"Gaya","original_name":"Buddha Multiplex Hotel and Management","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private management college","display_type":"Management institute","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gaya Industrial Area","latitude":"24.7287387","longitude":"84.9650304","matched_place_name":"Buddha Multiplex Hotel & Management (MBA College)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7287387%2C84.9650304","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the management college."},{"id":"BR-038","district":"Gaya","original_name":"Chaitanya International Business College, Bhore / Manpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private professional college","display_type":"University/college","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Katari Hill Rd, Gaya","latitude":"24.7918176","longitude":"84.9736759","matched_place_name":"Chaitanya International Business College, Gaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7918176%2C84.9736759","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the college."},{"id":"BR-039","district":"Gaya","original_name":"Damyanti Devi Polytechnic College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Dobhi, Bihar 824220","latitude":"24.5665854","longitude":"84.9225143","matched_place_name":"Damyanti Devi Polytechnic College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.5665854%2C84.9225143","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the polytechnic college."},{"id":"BR-040","district":"Gaya","original_name":"Kanhaiya Memorial College of Higher Education","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Bodh Gaya, Bihar 824220","latitude":"24.582987","longitude":"84.9410971","matched_place_name":"Kanhaiya Memorial College of Higher Education","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.582987%2C84.9410971","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the college."},{"id":"BR-041","district":"Gaya","original_name":"Krishna Polytechnic College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Cherki, Bihar 824237","latitude":"24.6746115","longitude":"84.8717044","matched_place_name":"Krishna Polytechnic","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.6746115%2C84.8717044","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched Krishna Polytechnic."},{"id":"BR-042","district":"Gaya","original_name":"Maalik Institute of Technology","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Bajaura, Bihar 824220","latitude":"24.579333","longitude":"84.9262608","matched_place_name":"Maalik Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.579333%2C84.9262608","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-043","district":"Gaya","original_name":"Mahabodhi College of Higher Education, Sherghati","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private professional college","display_type":"University/college","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=Mahabodhi%20College%20of%20Higher%20Education%2C%20Sherghati%2C%20Gaya%2C%20Bihar%2C%20India","hub_heuristic_score":"2.55","data_quality_note":"Search result was Mahabodhi College in Belaganj, not the listed Higher Education campus in Sherghati. Left unpinned."},{"id":"BR-044","district":"Gaya","original_name":"Neelam Singh College of Technology and Research","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Dobhi, Gaya, Bihar 824220","latitude":"24.5651261","longitude":"84.922163","matched_place_name":"Neelam Singh College of Technology & Research","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.5651261%2C84.922163","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the college."},{"id":"BR-045","district":"Gaya","original_name":"Ram Pratap Institute of Higher Education","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sherghati, Bihar 824220","latitude":"24.5199056","longitude":"84.8371531","matched_place_name":"Rampratap Institute of Higher Education","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.5199056%2C84.8371531","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-046","district":"Gaya","original_name":"RDS Institute of Technology","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Karmauni, Bodh Gaya, Bihar 824234","latitude":"24.6230328","longitude":"84.8910059","matched_place_name":"RDS Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.6230328%2C84.8910059","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-047","district":"Gaya","original_name":"RIMU Institute of Technology","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Pantnagar, Gaya, Bihar 823001","latitude":"24.7624898","longitude":"85.0043211","matched_place_name":"RIMU Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=24.7624898%2C85.0043211","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-048","district":"Gaya","original_name":"Shanti Niketan Institute of Technology","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=Shanti%20Niketan%20Institute%20of%20Technology%2C%20Gaya%2C%20Bihar%2C%20India","hub_heuristic_score":"2.55","data_quality_note":"Search result was Shanti Niketan Academy; not confirmed as the listed Institute of Technology. Left unpinned."},{"id":"BR-049","district":"Madhubani","original_name":"Government Engineering College (GEC) Madhubani + Startup Cell","rating_cluster":"Highest rated (district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government engineering college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"Startup/innovation support is named in the institute listing; operating scope and facility depth were not independently verified.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Pandaul, Sagarpur, Bihar 847234","latitude":"26.2422878","longitude":"86.0765636","matched_place_name":"Government Engineering College (GEC), Madhubani","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.2422878%2C86.0765636","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched GEC Madhubani."},{"id":"BR-050","district":"Madhubani","original_name":"Sandip University, Sijoul (School of Commerce & Management)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private university","display_type":"University/college","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sahuriya, Bihar 847404","latitude":"26.3506102","longitude":"86.2405787","matched_place_name":"Sandip University, Sijoul","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.3506102%2C86.2405787","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched Sandip University."},{"id":"BR-051","district":"Muzaffarpur","original_name":"L.S. College, Muzaffarpur","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://lscollege.ac.in/","address":"Kalambagh Chowk, Muzaffarpur, Bihar 842001","latitude":"26.1165576","longitude":"85.3785924","matched_place_name":"Langat Singh College (L.S. College)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1165576%2C85.3785924","hub_heuristic_score":"3.45","data_quality_note":"Verified premier constituent college of BRABU (est. 1899) in Muzaffarpur."},{"id":"BR-052","district":"Muzaffarpur","original_name":"Langat Singh (L.S.) College","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government constituent multidisciplinary college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://lscollege.ac.in/","address":"Kalambagh Chowk, Muzaffarpur, Bihar 842001","latitude":"26.1165576","longitude":"85.3785924","matched_place_name":"Langat Singh College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1165576%2C85.3785924","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched Langat Singh College; source rows 51 and 52 appear to be duplicate aliases."},{"id":"BR-053","district":"Muzaffarpur","original_name":"Babasaheb Bhimrao Ambedkar Bihar University (BRABU)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Kalambagh Rd, Muzaffarpur, Bihar 842001","latitude":"26.1099393","longitude":"85.3769264","matched_place_name":"Babasaheb Bhimrao Ambedkar Bihar University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1099393%2C85.3769264","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched BRABU."},{"id":"BR-054","district":"Muzaffarpur","original_name":"BRABU constituent colleges (district cluster)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College network","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=BRABU%20constituent%20colleges%20%28district%20cluster%29%2C%20Muzaffarpur%2C%20Bihar%2C%20India","hub_heuristic_score":"3.1","data_quality_note":"Source row describes a BRABU constituent-college cluster, not one institution or mappable campus. Split the cluster before pinning."},{"id":"BR-055","district":"Muzaffarpur","original_name":"Dr. Ram Manohar Lohia Smarak College (R.M.L.S. College)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.scribd.com/document/608794536/Institutions-Accredited-by-NAAC-Whose-Accreditation-Period-is-Valid-Uploaded-1-8-2022-1","address":"Diwan Rd, Muzaffarpur","latitude":"26.1161443","longitude":"85.3906419","matched_place_name":"Dr. RMLS College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1161443%2C85.3906419","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the college."},{"id":"BR-056","district":"Muzaffarpur","original_name":"Government Polytechnic, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Technical Chowk, Muzaffarpur","latitude":"26.1188762","longitude":"85.3818075","matched_place_name":"Government Polytechnic Muzaffarpur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1188762%2C85.3818075","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Government Polytechnic."},{"id":"BR-057","district":"Muzaffarpur","original_name":"Government Women's Polytechnic, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government women\u2019s polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Bela Rd, Narayanpur Anant, Muzaffarpur, Bihar 842005","latitude":"26.0895135","longitude":"85.4154701","matched_place_name":"Government Women Polytechnic College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.0895135%2C85.4154701","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Government Women\u2019s Polytechnic."},{"id":"BR-058","district":"Muzaffarpur","original_name":"Jiwachh College, Motipur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Motipur, Bihar 843111","latitude":"26.2795724","longitude":"85.1468915","matched_place_name":"Jiwachh College, Motipur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.2795724%2C85.1468915","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Jiwachh College."},{"id":"BR-059","district":"Muzaffarpur","original_name":"L.N.T. College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://lntcollege.ac.in/uploaded/naacdocMOU.pdf","address":"Kalambagh Rd, Mahammadpur Kazi, Muzaffarpur, Bihar 842002","latitude":"26.1073307","longitude":"85.3884224","matched_place_name":"Lalit Narayan Tirhut (L.N.T.) College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1073307%2C85.3884224","hub_heuristic_score":"3.1","data_quality_note":"Verified constituent college of BRABU situated at Aghoria Bazar Chowk, Muzaffarpur."},{"id":"BR-060","district":"Muzaffarpur","original_name":"M.D.D.M. College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government women's college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.scribd.com/document/448485712/Institutions-Accredited-NAAC-accreditation-period-valid-30-10-2017-pdf","address":"Club Rd, Mithanpura, Muzaffarpur, Bihar 842002","latitude":"26.1095048","longitude":"85.3959017","matched_place_name":"Mahant Darshan Das Mahila College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1095048%2C85.3959017","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched M.D.D.M. College."},{"id":"BR-061","district":"Muzaffarpur","original_name":"M.P. Sinha Science College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gobarsahi, Muzaffarpur, Bihar 843113","latitude":"26.1113136","longitude":"85.3630536","matched_place_name":"M. P. S Sinha Science College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1113136%2C85.3630536","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the science college."},{"id":"BR-062","district":"Muzaffarpur","original_name":"M.S.K.B. College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government women's college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Jonamganj, Muzaffarpur, Bihar 842001","latitude":"26.1275419","longitude":"85.3950023","matched_place_name":"Mahila Shilp Kala Bhawan (M.S.K.B.) College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1275419%2C85.3950023","hub_heuristic_score":"3.1","data_quality_note":"Verified NAAC-accredited B+ constituent women's college of BRABU at Banaras Bank Chowk."},{"id":"BR-063","district":"Muzaffarpur","original_name":"Mahant Darshan Das Mahila (M.D.D.M.) College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Women\u2019s constituent college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.scribd.com/document/448485712/Institutions-Accredited-NAAC-accreditation-period-valid-30-10-2017-pdf","address":"Club Rd, Mithanpura, Muzaffarpur, Bihar 842002","latitude":"26.1095048","longitude":"85.3959017","matched_place_name":"Mahant Darshan Das Mahila College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1095048%2C85.3959017","hub_heuristic_score":"3.1","data_quality_note":"Verified NAAC A-grade constituent women's degree college of BRABU in Muzaffarpur."},{"id":"BR-064","district":"Muzaffarpur","original_name":"Muzaffarpur Institute of Technology (MIT) + MIT Start-up Cell","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"4.0","innovation_score":"5.0","institution_type":"Government engineering college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"Institute Start-up Cell and Innovation Cell are documented; support includes lab access, seed capital, mentoring, and a design/incubation centre in progress.","facilities_evidence":"Official Start-up Cell page documents departmental laboratory access, seed support, academic mentors, and a design/incubation centre in progress.","rating_sources":"https://www.nirfindia.org/Rankings/2025/EngineeringRanking.html | https://www.mitmuzaffarpur.org/startup-cell/about/ | https://www.mitmuzaffarpur.org/startup-cell/about/ | https://www.mitmuzaffarpur.org/innovation-cell/about/","address":"Daudpur Kothi, Muzaffarpur, Bihar 842003","latitude":"26.141335","longitude":"85.3654296","matched_place_name":"Muzaffarpur Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.141335%2C85.3654296","hub_heuristic_score":"3.95","data_quality_note":"Startup cell is associated with the MIT campus."},{"id":"BR-065","district":"Muzaffarpur","original_name":"Nitishwar Singh College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Ramna, Muzaffarpur, Bihar 842002","latitude":"26.115606","longitude":"85.3948838","matched_place_name":"Nitishwar Mahavidyalaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.115606%2C85.3948838","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Nitishwar College."},{"id":"BR-066","district":"Muzaffarpur","original_name":"R.B.B.M. College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government women's college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"B.R. Ambedkar Bihar University Campus, Muzaffarpur","latitude":"26.1153245","longitude":"85.3785053","matched_place_name":"R.B.B.M. College, Muzaffarpur","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1153245%2C85.3785053","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the college."},{"id":"BR-067","district":"Muzaffarpur","original_name":"R.C. College, Sakra","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sakra\u2013Dholi Rd, Sakra, Bihar 843104","latitude":"25.9708634","longitude":"85.5674505","matched_place_name":"Rameswar Chethru (R.C.) College, Sakra","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.9708634%2C85.5674505","hub_heuristic_score":"3.1","data_quality_note":"Verified constituent unit of BRABU located near Dholi Station in Sakra."},{"id":"BR-068","district":"Muzaffarpur","original_name":"R.D.S. College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.scribd.com/document/608794536/Institutions-Accredited-by-NAAC-Whose-Accreditation-Period-is-Valid-Uploaded-1-8-2022-1","address":"Ramdayalu Nagar, Muzaffarpur, Bihar 842002","latitude":"26.1004835","longitude":"85.3859686","matched_place_name":"Ram Dayalu Singh College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1004835%2C85.3859686","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the R.D.S. College acronym."},{"id":"BR-069","district":"Muzaffarpur","original_name":"Rameshwar Singh College, Muzaffarpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Sikandarpur, Muzaffarpur, Bihar 842001","latitude":"26.1357561","longitude":"85.3720594","matched_place_name":"Rameshwar College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1357561%2C85.3720594","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the college."},{"id":"BR-070","district":"Muzaffarpur","original_name":"S.R.P.S. College, Jaintpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Jaintpur, Bihar 843123","latitude":"26.1041461","longitude":"85.1231379","matched_place_name":"Sri Raghav Prasad Singh College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1041461%2C85.1231379","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched S.R.P.S. College."},{"id":"BR-071","district":"Muzaffarpur","original_name":"L.N. Mishra College of Business Management (LNMCBM)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private management college","display_type":"Management institute","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/ManagementRanking.html","address":"Bhagwanpur, Muzaffarpur, Bihar 842001","latitude":"26.1216222","longitude":"85.3595149","matched_place_name":"L.N. Mishra College of Business Management","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.1216222%2C85.3595149","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched LNMCBM."},{"id":"BR-072","district":"Muzaffarpur","original_name":"Muzaffarpur College of Professional Education (MCPE)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic / professional college","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Narsinghpur, Muzaffarpur, Bihar 843132","latitude":"26.0770795","longitude":"85.4524326","matched_place_name":"Muzaffarpur College of Professional Education","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.0770795%2C85.4524326","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched MCPE."},{"id":"BR-073","district":"Muzaffarpur","original_name":"VTIT College, Saraiya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Pokhraira, Saraiya, Bihar 843106","latitude":"26.0618138","longitude":"85.2048167","matched_place_name":"VTIT College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=26.0618138%2C85.2048167","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched VTIT College."},{"id":"BR-074","district":"Patna","original_name":"National Institute of Technology Patna (NIT Patna) incl. Incubation Centre and E-Cell","rating_cluster":"Highest rated (district maximum)","revised_rating":"5.0","academic_score":"4.0","reputation_score":"5.0","facilities_score":"5.0","innovation_score":"5.0","institution_type":"Institute of National Importance / engineering institute","display_type":"University/college","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"Active Incubation Centre documents workspace, mentoring, funding avenues, maker facilities, startup cohorts, and a tinkering lab.","facilities_evidence":"Official facilities pages document hostels, computer centre, health centre, sports facilities, and library.","rating_sources":"https://www.nirfindia.org/Rankings/2025/EngineeringRanking.html | https://www.iitp.ac.in/student/ranking | https://nitp.ac.in/Institute?tab=about | https://www.nitp.ac.in/Facilities/Hostel | https://www.nitp.ac.in/ | https://incubationcenter.nitp.ac.in/","address":"Patna University Campus, Patna, Bihar 800005","latitude":"25.6207961","longitude":"85.1719948","matched_place_name":"National Institute of Technology, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6207961%2C85.1719948","hub_heuristic_score":"5.0","data_quality_note":"Incubation centre and E-Cell are associated with the NIT Patna campus."},{"id":"BR-075","district":"Patna","original_name":"Indian Institute of Technology Patna (IIT Patna) + Incubation Centre","rating_cluster":"Highest rated (district maximum)(M)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"5.0","facilities_score":"4.0","innovation_score":"5.0","institution_type":"Institute of National Importance / engineering institute","display_type":"University/college","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"IC-IITP provides prototyping, electronics testing, mechanical product development, and MEMS clean-room capabilities.","facilities_evidence":"Incubation Centre infrastructure includes electronics prototyping, testing, mechanical prototyping, and MEMS clean-room facilities.","rating_sources":"https://www.nirfindia.org/Rankings/2025/EngineeringRanking.html | https://www.nirfindia.org/Rankings/2025/OverallRanking.html | https://www.iitp.ac.in/student/ranking | https://nitp.ac.in/Institute?tab=about | https://startup.bihar.gov.in/IncubationCell","address":"Bihta, Bihar 801106","latitude":"25.5361836","longitude":"84.8543496","matched_place_name":"Incubation Centre [IIT-Patna]","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5361836%2C84.8543496","hub_heuristic_score":"4.4","data_quality_note":"The source row includes IIT Patna\u2019s incubation centre; pin is the incubation facility on the campus."},{"id":"BR-076","district":"Patna","original_name":"A.N. College, Patna (Patliputra University)","rating_cluster":"Highest rated (district maximum)(M)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government constituent multidisciplinary college","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/CollegeRanking.html | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Boring Rd, Sri Krishna Puri, Patna, Bihar 800013","latitude":"25.6185051","longitude":"85.1099544","matched_place_name":"A N College Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6185051%2C85.1099544","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched A.N. College."},{"id":"BR-077","district":"Patna","original_name":"Chandragupt Institute of Management Patna (CIMP) + CIMP-BIIF / B-HUB","rating_cluster":"Highest rated (district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"4.0","innovation_score":"5.0","institution_type":"Management institute + incubator","display_type":"Institution + incubator/cell","tier":"Tier 2 \u2014 established state/regional institute","incubator_or_cell_evidence":"CIMP-BIIF/B-HUB is listed as an incubation centre with co-working, mentorship, market links, and funding support.","facilities_evidence":"Official Bihar incubation listing documents co-working space, resource pool, mentorship, market links, and funding support.","rating_sources":"https://www.nirfindia.org/Rankings/2025/ManagementRanking.html | https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cimp.ac.in/nirf/ | https://startup.bihar.gov.in/IncubationCell","address":"Patna","latitude":"25.588553","longitude":"85.132118","matched_place_name":"Chandragupt Institute of Management Patna (CIMP)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.588553%2C85.132118","hub_heuristic_score":"4.3","data_quality_note":"CIMP-BIIF / B-HUB is associated with the CIMP campus."},{"id":"BR-078","district":"Patna","original_name":"College of Commerce, Arts and Science, Patna","rating_cluster":"Lower rated (below district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cocpatna.org/naacssr.aspx","address":"Kankarbagh Rd, Patna, Bihar 800020","latitude":"25.6017862","longitude":"85.1623249","matched_place_name":"College of Commerce, Arts and Science","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6017862%2C85.1623249","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched the college."},{"id":"BR-079","district":"Patna","original_name":"Magadh Mahila College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"4.0","academic_score":"4.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.scribd.com/document/448485712/Institutions-Accredited-NAAC-accreditation-period-valid-30-10-2017-pdf","address":"North Gandhi Maidan, Patna, Bihar 800001","latitude":"25.6211654","longitude":"85.1444519","matched_place_name":"Magadh Mahila College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6211654%2C85.1444519","hub_heuristic_score":"3.45","data_quality_note":"Google Maps result matched the college."},{"id":"BR-080","district":"Patna","original_name":"Patna Women's College (Autonomous)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"4.0","academic_score":"5.0","reputation_score":"5.0","facilities_score":"3.0","innovation_score":"4.0","institution_type":"Autonomous women's college","display_type":"University/college","tier":"Tier 1 \u2014 nationally ranked / leading institute","incubator_or_cell_evidence":"Published IIC star rating indicates a functioning institutional innovation council; no separate incubator facility verified.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/Rankings/2025/CollegeRanking.html | https://content.patnawomenscollege.in/naac-aqar/Commerce-2023-24-AQAR.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf | https://iic.mic.gov.in/assets/doc/IIC%20Annual%20Performance%202020-21-College-and-standalone.pdf","address":"Bailey Rd, Kidwaipuri, Patna, Bihar 800001","latitude":"25.6113916","longitude":"85.1249728","matched_place_name":"Patna Women\u2019s College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6113916%2C85.1249728","hub_heuristic_score":"3.85","data_quality_note":"Google Maps result matched the college."},{"id":"BR-081","district":"Patna","original_name":"Amity University Patna","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University / incubator host","display_type":"Institution + incubator/cell","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Bailey Rd, Rupaspur, Patna, Bihar 801503","latitude":"25.6123065","longitude":"85.0546418","matched_place_name":"Amity University, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6123065%2C85.0546418","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the Patna campus."},{"id":"BR-082","district":"Patna","original_name":"Aryabhatta Knowledge University (AKU)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Mithapur Farm Area, Patna, Bihar 800001","latitude":"25.5923023","longitude":"85.1349288","matched_place_name":"Aryabhatta Knowledge University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5923023%2C85.1349288","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched AKU."},{"id":"BR-083","district":"Patna","original_name":"B.D. College, Patna","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://www.bdcollegepatna.ac.in/","address":"New Jakkanpur, Mithapur, Patna, Bihar 800001","latitude":"25.597645","longitude":"85.1259471","matched_place_name":"B.D. College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.597645%2C85.1259471","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched B.D. College."},{"id":"BR-084","district":"Patna","original_name":"B.N. College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Ashok Rajpath, Patna University Campus, Patna, Bihar 800004","latitude":"25.6192826","longitude":"85.151083","matched_place_name":"B. N. College, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6192826%2C85.151083","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched B.N. College."},{"id":"BR-085","district":"Patna","original_name":"Birla Institute of Technology, Patna Campus","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Engineering college / incubator","display_type":"Institution + incubator/cell","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Samanpura, BIT Campus, Patna, Bihar 800014","latitude":"25.5955756","longitude":"85.0860338","matched_place_name":"Birla Institute of Technology, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5955756%2C85.0860338","hub_heuristic_score":"3.1","data_quality_note":"Same campus/place result as source alias BR-086."},{"id":"BR-086","district":"Patna","original_name":"BIT Mesra, Patna campus (BIT Patna)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Engineering campus of deemed university","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://bitmesra.ac.in/bitpatna","address":"Samanpura, BIT Campus, Patna, Bihar 800014","latitude":"25.5955756","longitude":"85.0860338","matched_place_name":"Birla Institute of Technology, Patna Campus","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5955756%2C85.0860338","hub_heuristic_score":"3.1","data_quality_note":"Verified 25-acre off-campus centre of BIT Mesra located near Patna Airport."},{"id":"BR-087","district":"Patna","original_name":"CIMAGE Group of Institutions","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private college group / management and IT","display_type":"Management institute","tier":"Tier 2 \u2014 established state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Patliputra Industrial Area, Patna","latitude":"25.6328954","longitude":"85.1012719","matched_place_name":"CIMAGE Group of Institutions","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6328954%2C85.1012719","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched CIMAGE."},{"id":"BR-088","district":"Patna","original_name":"Development Management Institute (DMI), Patna","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Management institute","display_type":"Management institute","tier":"Tier 2 \u2014 established state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Udyog Bhawan, Gandhi Maidan Rd, Patna, Bihar 800004","latitude":"25.6165405","longitude":"85.1487682","matched_place_name":"Development Management Institute (DMI)","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6165405%2C85.1487682","hub_heuristic_score":"3.1","data_quality_note":"Verified operational institute campus situated at Udyog Bhawan, Gandhi Maidan, Patna."},{"id":"BR-089","district":"Patna","original_name":"Government Polytechnic, Barh","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Google Maps address conflicts with the Barh name; verify before travel","latitude":"25.4521963","longitude":"85.7445889","matched_place_name":"Government Polytechnic, Barh","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.4521963%2C85.7445889","hub_heuristic_score":"3.1","data_quality_note":"Verified permanent state polytechnic campus at Ranabigha, Barh, Patna."},{"id":"BR-090","district":"Patna","original_name":"Government Polytechnic, Patna-7, Gulzarbagh","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gulzarbagh, Sadikpur, Patna, Bihar 800007","latitude":"25.6100257","longitude":"85.2053925","matched_place_name":"Government Polytechnic Gulzarbagh","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6100257%2C85.2053925","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the Gulzarbagh polytechnic."},{"id":"BR-091","district":"Patna","original_name":"Government Women's Polytechnic, Patna","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Jagdeo Path, Phulwari Sharif, Patna, Bihar 800014","latitude":"25.5905886","longitude":"85.0765994","matched_place_name":"Government Women\u2019s Polytechnic","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5905886%2C85.0765994","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched the women\u2019s polytechnic."},{"id":"BR-092","district":"Patna","original_name":"Lalit Narayan Mishra Institute of Economic Development and Social Change (LNMI)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"State management institute","display_type":"Management institute","tier":"Tier 2 \u2014 established state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Jawaharlal Nehru Marg, Patna, Bihar 800001","latitude":"25.6090879","longitude":"85.1234946","matched_place_name":"Lalit Narayan Mishra Institute of Economic Development and Social Change","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6090879%2C85.1234946","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched LNMI."},{"id":"BR-093","district":"Patna","original_name":"National Institute of Fashion Technology, Patna (NIFT Patna)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"5.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"National institute / fashion and design institute","display_type":"University/college","tier":"Tier 1 \u2014 national-level institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://nift.ac.in/patna/statutory-documents","address":"Mithapur Farm Area, Patna, Bihar 800001","latitude":"25.5948","longitude":"85.1356979","matched_place_name":"National Institute of Fashion Technology, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5948%2C85.1356979","hub_heuristic_score":"3.2","data_quality_note":"Google Maps result matched NIFT Patna."},{"id":"BR-094","district":"Patna","original_name":"New Government Polytechnic, Patna-13","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Government polytechnic","display_type":"Polytechnic","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Patliputra Industrial Area, Patna, Bihar 800013","latitude":"25.6300267","longitude":"85.1040593","matched_place_name":"New Government Polytechnic, Patna-13","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6300267%2C85.1040593","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched New Government Polytechnic."},{"id":"BR-095","district":"Patna","original_name":"Patliputra University (PPU)","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Kankarbagh, Patna, Bihar 800020","latitude":"25.6023496","longitude":"85.1591108","matched_place_name":"Patliputra University, Patna","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6023496%2C85.1591108","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched PPU."},{"id":"BR-096","district":"Patna","original_name":"Patna College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Patna College Rd, Patna University Campus, Patna","latitude":"25.6208088","longitude":"85.1655956","matched_place_name":"Patna College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6208088%2C85.1655956","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Patna College."},{"id":"BR-097","district":"Patna","original_name":"Patna Science College","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Patna University Campus, Patna, Bihar 800005","latitude":"25.6176232","longitude":"85.1698673","matched_place_name":"Patna Science College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6176232%2C85.1698673","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Patna Science College."},{"id":"BR-098","district":"Patna","original_name":"Patna University","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"3.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"University","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf | https://cdnbbsr.s3waas.gov.in/s324917db15c4e37e421866448c9ab23d8/uploads/2026/04/202604221989621386.pdf","address":"Ashok Rajpath, Patna University Campus, Patna, Bihar 800005","latitude":"25.6198929","longitude":"85.1652804","matched_place_name":"Patna University","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6198929%2C85.1652804","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Patna University."},{"id":"BR-099","district":"Patna","original_name":"Vanijya Mahavidyalaya","rating_cluster":"Lower rated (below district maximum)","revised_rating":"3.0","academic_score":"1.0","reputation_score":"4.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"College","display_type":"University/college","tier":"Tier 2 \u2014 state/regional institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Ashok Rajpath, Patna University Campus, Patna, Bihar 800005","latitude":"25.6212756","longitude":"85.1652192","matched_place_name":"Vanijya Mahavidyalaya","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6212756%2C85.1652192","hub_heuristic_score":"3.1","data_quality_note":"Google Maps result matched Vanijya Mahavidyalaya."},{"id":"BR-100","district":"Patna","original_name":"Awadhesh Sharma Institute of Technology, Naubatpur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Naubatpur\u2013Masaurhi Rd, Naubatpur, Bihar 801104","latitude":"25.4327581","longitude":"84.9218296","matched_place_name":"Awadhesh Sharma Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.4327581%2C84.9218296","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-101","district":"Patna","original_name":"Dr. Ashok Gagan College, Amhara / Bihta","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Amhara, Bihta, Bihar 801103","latitude":"25.5175986","longitude":"84.8666159","matched_place_name":"Dr Ashok Gagan College","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5175986%2C84.8666159","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the college."},{"id":"BR-102","district":"Patna","original_name":"Magadh Institute of Technology, Nasriganj / Danapur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Nasriganj, Patna, Bihar 800012","latitude":"25.6352722","longitude":"85.0669764","matched_place_name":"Magadh Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.6352722%2C85.0669764","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-103","district":"Patna","original_name":"Mothers Institute of Technology, Bihta","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Bihta-Lai Rd, Bihta, Bihar 801106","latitude":"25.5519873","longitude":"84.8619388","matched_place_name":"Mother\u2019s Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.5519873%2C84.8619388","hub_heuristic_score":"2.55","data_quality_note":"Google Maps result matched the institute."},{"id":"BR-104","district":"Patna","original_name":"Oxford College of Research and Technology, Fatuha","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=Oxford%20College%20of%20Research%20and%20Technology%2C%20Fatuha%2C%20Patna%2C%20Bihar%2C%20India","hub_heuristic_score":"2.55","data_quality_note":"Google Maps surfaced a similarly named Oxfor College of Research & Management; exact Oxford College of Research and Technology in Fatuha not verified."},{"id":"BR-105","district":"Patna","original_name":"Patliputra Institute of Management and Technology, Danapur","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"","latitude":"","longitude":"","matched_place_name":"","match_confidence":"Unresolved \u2014 review required","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=Patliputra%20Institute%20of%20Management%20and%20Technology%2C%20Danapur%2C%20Patna%2C%20Bihar%2C%20India","hub_heuristic_score":"2.55","data_quality_note":"Google Maps surfaced Patliputra Institute of Technology & Management in Patna, but the source says Management and Technology in Danapur. Exact match pending."},{"id":"BR-106","district":"Patna","original_name":"Satyam Institute of Technology, Sohgi / Gaurichak","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gaurichak, Bihar 800007","latitude":"25.4956491","longitude":"85.1849477","matched_place_name":"Satyam International Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.4956491%2C85.1849477","hub_heuristic_score":"2.55","data_quality_note":"Verified AICTE-approved polytechnic and technology campus at Gaurichak / Sohgi."},{"id":"BR-107","district":"Patna","original_name":"Satyam International Institute of Technology, Gaurichak","rating_cluster":"Lower rated (below district maximum)","revised_rating":"2.0","academic_score":"1.0","reputation_score":"2.0","facilities_score":"3.0","innovation_score":"3.0","institution_type":"Private polytechnic","display_type":"Polytechnic","tier":"Tier 3 \u2014 local/private institute","incubator_or_cell_evidence":"No institute-specific incubator, innovation lab, or IIC performance record located in the sources reviewed; neutral score used.","facilities_evidence":"No comparable, institution-specific facilities inventory was located in the sources reviewed; neutral score used.","rating_sources":"https://www.nirfindia.org/nirfpdfcdn/2025/pdf/Report/IR2025_Report.pdf","address":"Gaurichak, Bihar 800007","latitude":"25.4956491","longitude":"85.1849477","matched_place_name":"Satyam International Institute of Technology","match_confidence":"Google Maps matched","location_source":"Google Maps consumer search, Bihar district query, 2026-11-09","google_maps_search_url":"https://www.google.com/maps/search/?api=1&query=25.4956491%2C85.1849477","hub_heuristic_score":"2.55","data_quality_note":"Verified AICTE-approved polytechnic institute campus on Gaurichak Rd, Patna."}];</script>
+  <script src="district-boundaries.js"></script>
+  <script src="app-core.js"></script>
+  <script>
+(()=>{
+  const C = window.ShuruKarCore;
+  const $ = id => document.getElementById(id);
+  const picked = new Set();
+  let currentSpokes = [];
+  let activeFilter = 'all';
+  let searchQuery = '';
+  let leafletMap = null;
+  let baseLayers = {};
+  let currentBaseLayer = null;
+  let districtBoundaryLayer = null;
+  let markersLayer = null;
+  let routeLayer = null;
+
+  function e(s){
+    return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function hub(){
+    return DATA.find(x => x.id === $('hub').value) || null;
+  }
+
+  function stops(){
+    return currentSpokes.filter(x => picked.has(x.id));
+  }
+
+  function buildOptions(){
+    const ds = C.getDistricts(DATA);
+    $('district').innerHTML = ds.map(d => `<option value="${e(d)}">${e(d)}</option>`).join('');
+    $('district').value = 'Bhagalpur';
+    fillHubs();
+  }
+
+  function fillHubs(){
+    const d = $('district').value;
+    const prev = $('hub').value;
+    const hubs = C.getHubOptions(DATA, d);
+    $('hub').innerHTML = hubs.map(x => `<option value="${e(x.id)}">${e(x.original_name)} · ${Number(x.revised_rating||0).toFixed(0)}/5★</option>`).join('');
+    if(hubs.some(x => x.id === prev)) $('hub').value = prev;
+    else if(hubs.length) $('hub').selectedIndex = 0;
+  }
+
+  function initMap(){
+    if(typeof L === 'undefined') {
+      return;
+    }
+    if(leafletMap) return;
+
+    leafletMap = L.map('map', {
+      zoomControl: false,
+      attributionControl: true,
+      maxZoom: 19,
+      minZoom: 6
+    }).setView([25.6, 85.8], 9);
+
+    baseLayers.streets = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri &mdash; World Street Map'
+    });
+
+    baseLayers.osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+      subdomains: 'abc',
+      maxZoom: 20,
+      attribution: '&copy; OpenStreetMap France'
+    });
+
+    baseLayers.topo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri &mdash; Topographic Map'
+    });
+
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+    const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+    baseLayers.satellite = L.layerGroup([esriSat, esriLabels]);
+
+    currentBaseLayer = baseLayers.streets;
+    currentBaseLayer.addTo(leafletMap);
+
+    districtBoundaryLayer = L.geoJSON(null, {
+      style: {
+        color: '#0f766e',
+        weight: 2.5,
+        opacity: 0.85,
+        dashArray: '5, 5',
+        fillColor: '#0f766e',
+        fillOpacity: 0.05
+      }
+    }).addTo(leafletMap);
+
+    routeLayer = L.layerGroup().addTo(leafletMap);
+    markersLayer = L.layerGroup().addTo(leafletMap);
+
+    const zIn = $('zoomIn');
+    const zOut = $('zoomOut');
+    const reset = $('mapReset');
+    if(zIn) zIn.addEventListener('click', () => leafletMap && leafletMap.zoomIn());
+    if(zOut) zOut.addEventListener('click', () => leafletMap && leafletMap.zoomOut());
+    if(reset) reset.addEventListener('click', () => fitDistrictBounds());
+
+    setupBasemapButtons();
+  }
+
+  function setupBasemapButtons(){
+    const btns = [
+      { id: 'btnLayerStreets', layer: baseLayers.streets },
+      { id: 'btnLayerOsm', layer: baseLayers.osm },
+      { id: 'btnLayerTopo', layer: baseLayers.topo },
+      { id: 'btnLayerSatellite', layer: baseLayers.satellite }
+    ];
+    btns.forEach(b => {
+      const btn = $(b.id);
+      if(!btn) return;
+      btn.addEventListener('click', () => {
+        btns.forEach(x => { const el = $(x.id); if(el) el.classList.remove('active'); });
+        btn.classList.add('active');
+        if(currentBaseLayer && leafletMap) leafletMap.removeLayer(currentBaseLayer);
+        currentBaseLayer = b.layer;
+        if(leafletMap) currentBaseLayer.addTo(leafletMap);
+      });
+    });
+  }
+
+  function fitDistrictBounds(){
+    if(!leafletMap) return;
+    if(districtBoundaryLayer && districtBoundaryLayer.getLayers && districtBoundaryLayer.getLayers().length > 0) {
+      leafletMap.flyToBounds(districtBoundaryLayer.getBounds(), { padding: [30, 30], duration: 0.8 });
+    } else {
+      const d = $('district').value;
+      const pts = C.getLocated(DATA, d);
+      if(pts.length > 0) {
+        const latlngs = pts.map(p => [Number(p.latitude), Number(p.longitude)]);
+        leafletMap.flyToBounds(L.latLngBounds(latlngs), { padding: [35, 35], duration: 0.8 });
+      }
+    }
+  }
+
+  function drawMap(all){
+    const currentDistrict = $('district').value;
+    const located = C.getLocated(all, currentDistrict);
+    const h = hub();
+
+    if($('pinBadge')) $('pinBadge').textContent = located.length + ' mapped';
+    const missing = all.filter(r => r.district === currentDistrict && !r.latitude);
+    if($('unlocated')) {
+      $('unlocated').textContent = missing.length
+        ? `${missing.length} source entr${missing.length===1?'y is':'ies are'} unpinned due to ambiguous location match in Google Maps (see CSV notes).`
+        : 'All institutions in this district have verified map pins.';
+    }
+
+    if(!leafletMap) return;
+
+    if(districtBoundaryLayer) {
+      districtBoundaryLayer.clearLayers();
+      const boundsData = (typeof DISTRICT_BOUNDARIES !== 'undefined') ? DISTRICT_BOUNDARIES : (window.DISTRICT_BOUNDARIES || null);
+      if(boundsData && boundsData[currentDistrict]) {
+        districtBoundaryLayer.addData(boundsData[currentDistrict]);
+      }
+    }
+
+    if(markersLayer) markersLayer.clearLayers();
+    const groups = new Map();
+    for(const r of located) {
+      const key = `${Number(r.latitude).toFixed(5)},${Number(r.longitude).toFixed(5)}`;
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    }
+
+    const stopList = stops();
+    for(const records of groups.values()) {
+      const lat = Number(records[0].latitude);
+      const lon = Number(records[0].longitude);
+      const isHub = records.some(r => h && r.id === h.id);
+      const stopIndex = records.findIndex(r => picked.has(r.id));
+      const hasStop = stopIndex !== -1;
+      const isReview = records.some(r => (r.match_confidence || '').includes('review'));
+
+      let iconHtml = '';
+      let className = 'custom-pin';
+      let iconSize = [24, 24];
+
+      if(isHub) {
+        iconHtml = `<div class="hub-pin-inner"><div class="hub-pin-pulse"></div>🏛️</div>`;
+        iconSize = [34, 34];
+      } else if(hasStop) {
+        const orderNum = stopList.findIndex(x => x.id === records[stopIndex].id) + 1;
+        iconHtml = `<div class="stop-pin-inner">${orderNum}</div>`;
+        iconSize = [28, 28];
+      } else {
+        const countBadge = records.length > 1 ? records.length : '';
+        const amberClass = isReview ? 'amber' : '';
+        iconHtml = `<div class="spoke-pin-inner ${amberClass}">${countBadge}</div>`;
+      }
+
+      const icon = L.divIcon({
+        className,
+        html: iconHtml,
+        iconSize,
+        iconAnchor: [iconSize[0]/2, iconSize[1]/2]
+      });
+
+      const marker = L.marker([lat, lon], { icon, keyboard: true });
+
+      const popupHtml = `<div class="popup-card">
+        <div class="popup-title">${e(records.map(r => r.original_name).join(' / '))}</div>
+        <span class="popup-badge" style="background:${isHub?'#fef3c7':isReview?'#fed7aa':'#ccfbf1'};color:${isHub?'#92400e':isReview?'#9a3412':'#115e59'}">
+          ${isHub ? 'District Hub' : (records[0].display_type || 'Institution')} · ${records[0].revised_rating||'—'}/5★
+        </span>
+        <div class="popup-address">${e(records[0].address || records[0].matched_place_name || '')}</div>
+        ${records[0].data_quality_note ? `<div style="font-size:10.5px;color:#92400e;margin-bottom:6px;">${e(records[0].data_quality_note)}</div>` : ''}
+        <div class="popup-actions">
+          ${!isHub ? `<button class="popup-btn popup-btn-primary" onclick="window.__selectSpoke('${records[0].id}')">${picked.has(records[0].id)?'Remove from Route':'Add to Route'}</button>` : ''}
+          <a class="popup-btn popup-btn-outline" href="${e(records[0].google_maps_search_url)}" target="_blank" rel="noopener noreferrer">Google Maps ↗</a>
+        </div>
+      </div>`;
+
+      marker.bindPopup(popupHtml);
+      marker.on('click', () => {
+        showDetails(records[0]);
+      });
+
+      if(markersLayer) markersLayer.addLayer(marker);
+    }
+
+    drawRoutePolyline(h, stopList);
+  }
+
+  window.__selectSpoke = function(id){
+    if(picked.has(id)) picked.delete(id);
+    else {
+      if(picked.size >= 8) {
+        alert('You can select up to 8 spoke institutions per Google Maps route.');
+        return;
+      }
+      picked.add(id);
+    }
+    drawList();
+    drawMap(DATA.filter(r => r.district === $('district').value));
+  };
+
+  async function drawRoutePolyline(h, stops){
+    if(!routeLayer) return;
+    routeLayer.clearLayers();
+
+    const summaryBox = $('tripSummaryBox');
+    const routeStatus = $('routeStatusText');
+
+    if(!h || stops.length === 0) {
+      if(summaryBox) summaryBox.style.display = 'none';
+      if(routeStatus) routeStatus.textContent = 'Select up to 8 spokes to calculate road route.';
+      return;
+    }
+
+    if(summaryBox) summaryBox.style.display = 'flex';
+    updateItineraryPills(h, stops);
+
+    const pts = [h, ...stops].filter(r => r && r.latitude && r.longitude);
+    if(pts.length < 2) return;
+
+    const coords = pts.map(r => `${Number(r.longitude).toFixed(6)},${Number(r.latitude).toFixed(6)}`).join(';');
+    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+
+    if(routeStatus) routeStatus.textContent = 'Calculating road route along streets...';
+
+    const latlngs = pts.map(p => [Number(p.latitude), Number(p.longitude)]);
+    const fallbackPolyline = L.polyline(latlngs, {
+      color: '#0f766e',
+      weight: 3.5,
+      dashArray: '6, 8',
+      opacity: 0.7
+    }).addTo(routeLayer);
+
+    try {
+      const resp = await fetch(osrmUrl);
+      if(!resp.ok) throw new Error('Route service unavailable');
+      const json = await resp.json();
+      if(json.code === 'Ok' && json.routes && json.routes.length > 0) {
+        const route = json.routes[0];
+        routeLayer.clearLayers();
+
+        const geojsonCoords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
+        L.polyline(geojsonCoords, {
+          color: '#10b981',
+          weight: 8,
+          opacity: 0.35,
+          lineCap: 'round'
+        }).addTo(routeLayer);
+
+        L.polyline(geojsonCoords, {
+          color: '#047857',
+          weight: 4.5,
+          opacity: 0.95,
+          lineCap: 'round'
+        }).addTo(routeLayer);
+
+        const distStr = C.formatDistance ? C.formatDistance(route.distance) : `${(route.distance/1000).toFixed(1)} km`;
+        const durStr = C.formatDuration ? C.formatDuration(route.duration) : `${Math.round(route.duration/60)} mins`;
+        if($('tripDistance')) $('tripDistance').textContent = distStr;
+        if($('tripDuration')) $('tripDuration').textContent = durStr;
+        if(routeStatus) routeStatus.textContent = `Road route: ${distStr} · ~${durStr} driving over streets & highways.`;
+        if(geojsonCoords.length > 0 && leafletMap) {
+          leafletMap.flyToBounds(L.latLngBounds(geojsonCoords), { padding: [45, 45], duration: 0.8 });
+        }
+      }
+    } catch(err) {
+      if(routeStatus) routeStatus.textContent = 'Direct route lines plotted (offline/direct mode).';
+      if($('tripDistance')) $('tripDistance').textContent = '~ Direct';
+      if($('tripDuration')) $('tripDuration').textContent = '—';
+    }
+  }
+
+  function updateItineraryPills(h, stops){
+    const wrap = $('tripItineraryPills');
+    if(!wrap) return;
+    let pills = `<span class="stop-pill" style="background:#fef3c7;border-color:#fcd34d;">🏛️ ${e(h.original_name.slice(0, 20))}...</span>`;
+    stops.forEach((s, i) => {
+      pills += `<span class="stop-pill">
+        <span style="color:#0f766e;font-weight:900;">${i+1}</span>
+        ${e(s.original_name.slice(0, 18))}...
+        <button class="stop-pill-remove" type="button" onclick="window.__selectSpoke('${s.id}')" title="Remove stop">×</button>
+      </span>`;
+    });
+    wrap.innerHTML = pills;
+  }
+
+  function showDetails(r){
+    if(!r) return;
+    $('details').innerHTML = `
+      <strong>${e(r.original_name)}</strong> · source rating ${e(r.revised_rating||'—')}/5★<br>
+      <span style="color:var(--ink-muted);font-weight:600;">${e(r.matched_place_name||'No confirmed place match')}</span><br>
+      <span>${e(r.address||'')}</span><br>
+      ${r.incubator_or_cell_evidence ? `<div style="margin-top:4px;color:#115e59;"><strong>Startup support:</strong> ${e(r.incubator_or_cell_evidence)}</div>` : ''}
+      ${r.data_quality_note ? `<div style="margin-top:4px;color:#92400e;">${e(r.data_quality_note)}</div>` : ''}
+      <div style="margin-top:6px;">
+        <a href="${e(r.google_maps_search_url)}" target="_blank" rel="noopener noreferrer">Open verified pin in Google Maps ↗</a>
+      </div>
+    `;
+  }
+
+  function drawList(){
+    const h = hub();
+    currentSpokes = h ? C.getSpokes(DATA, h.district, h.id) : [];
+
+    for(const id of [...picked]){
+      if(!currentSpokes.some(r => r.id === id)) picked.delete(id);
+    }
+
+    if($('spokeTitle')) $('spokeTitle').textContent = h ? `Spokes from ${h.original_name}` : 'Spoke institutions';
+    if($('selectedBadge')) $('selectedBadge').textContent = picked.size + ' selected';
+    if($('routeButton')) $('routeButton').disabled = !h || picked.size === 0;
+
+    let filtered = currentSpokes.filter(r => {
+      if(searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchName = (r.original_name || '').toLowerCase().includes(q);
+        const matchPlace = (r.matched_place_name || '').toLowerCase().includes(q);
+        const matchType = (r.display_type || '').toLowerCase().includes(q);
+        if(!matchName && !matchPlace && !matchType) return false;
+      }
+      if(activeFilter === 'high') return Number(r.revised_rating || 0) >= 4;
+      if(activeFilter === 'incubation') return (r.incubator_or_cell_evidence || '').length > 0 || (r.display_type || '').includes('incubator');
+      if(activeFilter === 'review') return (r.match_confidence || '').includes('review');
+      return true;
+    });
+
+    const list = $('spokeList');
+    if(!list) return;
+    if(filtered.length === 0) {
+      list.innerHTML = `<div style="padding:16px;color:var(--ink-muted);text-align:center;">No institutions match the current search or filter.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(r => {
+      const isChecked = picked.has(r.id);
+      const isReview = (r.match_confidence || '').includes('review');
+      const statusText = r.latitude ? (isReview ? 'Match review' : 'Verified') : 'Unmapped';
+      const ratingVal = r.revised_rating ? `${r.revised_rating}★` : '—';
+      return `
+        <label class="spoke ${isChecked ? 'selected' : ''}">
+          <input type="checkbox" data-check="${e(r.id)}" ${isChecked ? 'checked' : ''} aria-label="Add ${e(r.original_name)} to route">
+          <span>
+            <span class="spoke-name">${e(r.original_name)}</span>
+            <span class="spoke-meta">
+              <span class="meta-tag rating">${ratingVal}</span>
+              <span class="meta-tag">${e(r.display_type || 'Institute')}</span>
+              <span class="meta-tag ${isReview ? 'review' : ''}">${statusText}</span>
+            </span>
+          </span>
+          <a class="map-link" href="${e(r.google_maps_search_url)}" target="_blank" rel="noopener noreferrer">Maps ↗</a>
+        </label>
+      `;
+    }).join('');
+
+    list.querySelectorAll('[data-check]').forEach(c => {
+      c.addEventListener('change', () => {
+        if(c.checked) {
+          if(picked.size >= 8) {
+            alert('You can choose up to 8 spoke institutions per Google Maps route.');
+            c.checked = false;
+            return;
+          }
+          picked.add(c.dataset.check);
+        } else {
+          picked.delete(c.dataset.check);
+        }
+        if($('selectedBadge')) $('selectedBadge').textContent = picked.size + ' selected';
+        if($('routeButton')) $('routeButton').disabled = picked.size === 0;
+        drawList();
+        drawMap(DATA.filter(r => r.district === $('district').value));
+      });
+    });
+  }
+
+  function render(){
+    const h = hub();
+    const all = DATA.filter(r => r.district === $('district').value);
+    if($('totalCount')) $('totalCount').textContent = DATA.length + ' institutions · ' + C.getDistricts(DATA).length + ' districts';
+    if($('mapTitle')) $('mapTitle').textContent = h ? h.district + ' Street & Network Map' : 'Institution map';
+    if($('mapSubtitle')) $('mapSubtitle').textContent = h ? `Hub: ${h.original_name} · other district institutions shown as spokes` : 'Choose a hub.';
+
+    drawList();
+    drawMap(all);
+    fitDistrictBounds();
+  }
+
+  function initFilterControls(){
+    if(typeof document === 'undefined' || !document.querySelectorAll) return;
+    document.querySelectorAll('.filter-chip[data-filter]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip[data-filter]').forEach(x => x.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.dataset.filter;
+        drawList();
+      });
+    });
+
+    const searchInput = $('spokeSearch');
+    if(searchInput) {
+      searchInput.addEventListener('input', ev => {
+        searchQuery = ev.target.value.trim();
+        drawList();
+      });
+    }
+
+    const clearBtn = $('clearRouteBtn');
+    if(clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        picked.clear();
+        drawList();
+        drawMap(DATA.filter(r => r.district === $('district').value));
+      });
+    }
+  }
+
+  function initMobileTabs(){
+    const tabMap = $('tabMapBtn');
+    const tabSpokes = $('tabSpokesBtn');
+    const workspace = $('workspace');
+    if(!tabMap || !tabSpokes || !workspace) return;
+
+    tabMap.addEventListener('click', () => {
+      tabMap.classList.add('active');
+      tabSpokes.classList.remove('active');
+      workspace.className = 'workspace tab-map';
+      if(leafletMap) setTimeout(() => leafletMap.invalidateSize(), 150);
+    });
+
+    tabSpokes.addEventListener('click', () => {
+      tabSpokes.classList.add('active');
+      tabMap.classList.remove('active');
+      workspace.className = 'workspace tab-spokes';
+    });
+  }
+
+  function init(){
+    buildOptions();
+    initMap();
+    initFilterControls();
+    initMobileTabs();
+    render();
+
+    const dist = $('district');
+    if(dist) dist.addEventListener('change', () => {
+      picked.clear();
+      fillHubs();
+      render();
+    });
+
+    const hubEl = $('hub');
+    if(hubEl) hubEl.addEventListener('change', () => {
+      picked.clear();
+      render();
+    });
+
+    const modeEl = $('mode');
+    if(modeEl) modeEl.addEventListener('change', () => {
+      const h = hub();
+      drawRoutePolyline(h, stops());
+    });
+
+    const rBtn = $('routeButton');
+    if(rBtn) rBtn.addEventListener('click', () => {
+      try {
+        const h = hub();
+        const s = stops();
+        const mode = $('mode').value;
+        const url = C.directionsUrl(h, s, mode);
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch(err) {
+        if($('details')) $('details').textContent = err.message;
+      }
+    });
+
+    if(typeof window !== 'undefined') {
+      window.addEventListener('resize', () => {
+        if(leafletMap) leafletMap.invalidateSize();
+      });
+    }
+  }
+
+  init();
+})();
+  </script>
+</body>
+</html>

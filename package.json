@@ -1,0 +1,20 @@
+{
+  "name": "shurukar-bihar-guide",
+  "version": "1.0.0",
+  "description": "Interactive street map, official district boundaries, and multi-stop route planner for Bihar entrepreneurship institutions",
+  "main": "app-core.js",
+  "scripts": {
+    "test": "node --test test/shurukar-guide.test.js"
+  },
+  "keywords": [
+    "bihar",
+    "maps",
+    "leaflet",
+    "routing",
+    "osrm",
+    "gis",
+    "entrepreneurship"
+  ],
+  "author": "Sai Praveen Behara <saipraveenbehara@gmail.com>",
+  "license": "MIT"
+}
