@@ -2,6 +2,8 @@
 
 Interactive web GIS, official administrative district boundaries, street-level cartography, and multi-stop route planner for 107 entrepreneurship-support institutions across 6 districts of Bihar (Bhagalpur, Darbhanga, Gaya, Madhubani, Muzaffarpur, and Patna).
 
+🔗 **Live Web Application**: [https://saipraveenbehara.github.io/shurukar-bihar-guide/](https://saipraveenbehara.github.io/shurukar-bihar-guide/)
+
 ---
 
 ## 🚀 Quick Start
